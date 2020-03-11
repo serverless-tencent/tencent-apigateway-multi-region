@@ -1,4 +1,5 @@
 const { Component } = require('@serverless/core')
+const random = require('ext/string/random')
 
 // Create a new component by extending the Component Class
 class TencentSCFMultiRegion extends Component {
@@ -30,7 +31,7 @@ class TencentSCFMultiRegion extends Component {
   async default(inputs = {}) {
     const regionList = typeof inputs.region == 'string' ? [inputs.region] : inputs.region
     const baseInputs = {}
-    const apigateways = {}
+    const apigateways = []
     const apigatewaysOutput = {}
     for (const eveKey in inputs) {
       if (eveKey != 'region' && eveKey.indexOf('ap-') != 0) {
@@ -52,10 +53,9 @@ class TencentSCFMultiRegion extends Component {
       if (inputs[regionList[i]]) {
         tempInputs = this.mergeJson(inputs[regionList[i]], tempInputs)
       }
-      const tencentApigateway = await this.load(
-        '@serverless/tencent-apigateway',
-        `${tempInputs.region}-apigateway`
-      )
+      const tempKey = `${tempInputs.region}-${random({ length: 6 })}`
+      apigateways.push(tempKey)
+      const tencentApigateway = await this.load('@serverless/tencent-apigateway', tempKey)
       const tencentApigatewayOutput = await tencentApigateway(tempInputs)
       const tempApis = new Array()
       for (let api = 0; api < tencentApigatewayOutput.apis.length; api++) {
@@ -84,14 +84,12 @@ class TencentSCFMultiRegion extends Component {
     const removeInput = {
       fromClientRemark: inputs.fromClientRemark || 'tencent-apigateway-multi-region'
     }
-    for (const eveKey in this.state) {
-      this.context.status(`Removing ${eveKey} apigateway`)
-      const tencentApigateway = await this.load(
-        '@serverless/tencent-apigateway',
-        `${eveKey}-apigateway`
-      )
+
+    for (let i = 0; i < this.state.length; i++) {
+      this.context.status(`Removing ${this.state[i]} apigateway`)
+      const tencentApigateway = await this.load('@serverless/tencent-apigateway', this.state[i])
       await tencentApigateway.remove(removeInput)
-      this.context.status(`Removed ${eveKey} apigateway`)
+      this.context.status(`Removed ${this.state[i]} apigateway`)
     }
 
     // after removal we clear the state to keep it in sync with the service API
