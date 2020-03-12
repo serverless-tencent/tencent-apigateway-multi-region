@@ -53,7 +53,7 @@ class TencentSCFMultiRegion extends Component {
       if (inputs[regionList[i]]) {
         tempInputs = this.mergeJson(inputs[regionList[i]], tempInputs)
       }
-      const tempKey = `${tempInputs.region}-${random({ length: 6 })}`
+      const tempKey = `${tempInputs.region}-apigateway`
       apigateways.push(tempKey)
       const tencentApigateway = await this.load('@serverless/tencent-apigateway', tempKey)
       const tencentApigatewayOutput = await tencentApigateway(tempInputs)
