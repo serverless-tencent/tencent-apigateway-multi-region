@@ -14,7 +14,7 @@
   "license": "Apache",
   "dependencies": {
     "@serverless/core": "^1.0.0",
-    "@serverless/tencent-apigateway": "^2.1.3",
+    "@serverless/tencent-apigateway": "^2.1.6",
     "ext": "^1.4.0"
   },
   "devDependencies": {
