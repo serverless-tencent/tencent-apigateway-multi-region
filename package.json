@@ -1,7 +1,7 @@
 {
   "name": "@serverless/tencent-apigateway-multi-region",
   "description": "Tencent Cloud Apigateway Multi-Region",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "main": "./serverless.js",
   "publishConfig": {
     "access": "public"
